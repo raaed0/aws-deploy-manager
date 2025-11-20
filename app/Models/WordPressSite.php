@@ -92,13 +92,15 @@ class WordPressSite extends Model
     public function dockerEnvironment(): array
     {
         $homeConfig = 'define("WP_HOME","https://'.$this->domain.'"); define("WP_SITEURL","https://'.$this->domain.'");';
-        $httpsProxyFix = 'if (isset($_SERVER["HTTP_X_FORWARDED_PROTO"]) && $_SERVER["HTTP_X_FORWARDED_PROTO"] === "https") { $_SERVER["HTTPS"] = "on"; $_SERVER["SERVER_PORT"]=443; } if (isset($_SERVER["HTTP_X_FORWARDED_HOST"])) { $_SERVER["HTTP_HOST"] = $_SERVER["HTTP_X_FORWARDED_HOST"]; } define("FORCE_SSL_ADMIN", true);';
+        $httpsProxyFix = 'if (!empty($_SERVER["HTTP_X_FORWARDED_PROTO"]) && $_SERVER["HTTP_X_FORWARDED_PROTO"] === "https") { $_SERVER["HTTPS"] = "on"; $_SERVER["SERVER_PORT"] = 443; } if (!empty($_SERVER["HTTP_X_FORWARDED_HOST"])) { $_SERVER["HTTP_HOST"] = $_SERVER["HTTP_X_FORWARDED_HOST"]; } define("FORCE_SSL_ADMIN", true);';
+        $configExtra = $homeConfig.' '.$httpsProxyFix;
 
         return array_merge([
             'WORDPRESS_DB_NAME' => $this->database_name,
             'WORDPRESS_DB_USER' => $this->database_username,
             'WORDPRESS_DB_PASSWORD' => $this->database_password,
-            'WORDPRESS_CONFIG_EXTRA' => "{$homeConfig} {$httpsProxyFix}",
+            // Escape $ so docker compose does not substitute $_SERVER during env expansion
+            'WORDPRESS_CONFIG_EXTRA' => str_replace('$', '$$', $configExtra),
         ], $this->environment ?? []);
     }
 }
