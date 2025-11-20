@@ -61,7 +61,7 @@ class RemoteServerClient
     {
         $sftp = $this->connectSftp();
 
-        if (! $sftp->file_put_contents($remotePath, $contents)) {
+        if (! $sftp->put($remotePath, $contents)) {
             throw new RuntimeException("Failed to upload file to {$remotePath}");
         }
     }
