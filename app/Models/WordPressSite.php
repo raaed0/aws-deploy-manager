@@ -92,7 +92,7 @@ class WordPressSite extends Model
     public function dockerEnvironment(): array
     {
         $homeConfig = 'define("WP_HOME","https://'.$this->domain.'"); define("WP_SITEURL","https://'.$this->domain.'");';
-        $httpsProxyFix = 'if (isset($_SERVER["HTTP_X_FORWARDED_PROTO"]) && $_SERVER["HTTP_X_FORWARDED_PROTO"] === "https") { $_SERVER["HTTPS"] = "on"; }';
+        $httpsProxyFix = 'if (isset($_SERVER["HTTP_X_FORWARDED_PROTO"]) && $_SERVER["HTTP_X_FORWARDED_PROTO"] === "https") { $_SERVER["HTTPS"] = "on"; $_SERVER["SERVER_PORT"]=443; } if (isset($_SERVER["HTTP_X_FORWARDED_HOST"])) { $_SERVER["HTTP_HOST"] = $_SERVER["HTTP_X_FORWARDED_HOST"]; } define("FORCE_SSL_ADMIN", true);';
 
         return array_merge([
             'WORDPRESS_DB_NAME' => $this->database_name,
