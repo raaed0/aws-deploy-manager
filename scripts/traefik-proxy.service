@@ -1,0 +1,14 @@
+[Unit]
+Description=Traefik reverse proxy for WordPress containers
+After=docker.service
+Requires=docker.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+WorkingDirectory=/opt/wp-sites
+ExecStart=/usr/bin/docker compose -f traefik-proxy-compose.yml up -d
+ExecStop=/usr/bin/docker compose -f traefik-proxy-compose.yml down
+
+[Install]
+WantedBy=multi-user.target

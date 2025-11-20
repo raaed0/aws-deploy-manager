@@ -121,6 +121,13 @@ scp scripts/traefik-proxy-compose.yml ec2-user@<docker-host>:/opt/wp-sites/traef
 ssh ec2-user@<docker-host> "cd /opt/wp-sites && docker compose -f traefik-proxy-compose.yml up -d"
 ```
 
+To have Traefik start on reboot, install the provided systemd unit on the Docker host:
+
+```bash
+scp scripts/traefik-proxy.service ec2-user@<docker-host>:/etc/systemd/system/traefik-proxy.service
+ssh ec2-user@<docker-host> "sudo systemctl daemon-reload && sudo systemctl enable --now traefik-proxy.service"
+```
+
 Prereqs on the Docker host: Docker Engine + Compose plugin (or the standalone v2 binary), external network `wp-sites` created (`docker network create wp-sites`), and a wildcard DNS (or individual A records) pointing your domains to the Docker host IP. Traefik listens on port 80 and routes by `Host(...)` to each WordPress container automatically via labels.
 - Queue, cache, session, and DB drivers are all configured through the standard Laravel `.env` keys.
 
