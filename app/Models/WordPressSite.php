@@ -17,6 +17,7 @@ class WordPressSite extends Model
         'name',
         'domain',
         'container_name',
+        'availability_zone',
         'server_host',
         'server_port',
         'server_user',
@@ -56,12 +57,23 @@ class WordPressSite extends Model
         });
     }
 
-    public function markStatus(WordPressSiteStatus $status, ?array $meta = null): void
+    public function markStatus(WordPressSiteStatus $status, ?array $metaUpdates = null): void
     {
+        $mergedMeta = array_merge($this->meta ?? [], $metaUpdates ?? []);
+
+        $history = $this->meta['history'] ?? [];
+        $history[] = [
+            'status' => $status->value,
+            'at' => now()->toIso8601String(),
+            'message' => $metaUpdates['message'] ?? null,
+        ];
+
+        $mergedMeta['history'] = collect($history)->take(-30)->values()->all();
+
         $this->forceFill([
             'status' => $status,
             'last_health_check_at' => now(),
-            'meta' => array_merge($this->meta ?? [], $meta ?? []),
+            'meta' => $mergedMeta,
         ])->save();
     }
 

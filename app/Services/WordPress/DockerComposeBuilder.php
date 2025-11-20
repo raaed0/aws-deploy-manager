@@ -75,6 +75,11 @@ YAML;
 
     protected function hostPort(WordPressSite $site): int
     {
+        $static = config('wordpress.host_port');
+        if ($static) {
+            return (int) $static;
+        }
+
         return 8000 + (abs(crc32($site->container_name)) % 1000);
     }
 }

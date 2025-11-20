@@ -91,7 +91,8 @@ export default function Index({ sites, filters, statusOptions, summary }) {
                         <thead>
                             <tr className="text-left text-xs uppercase tracking-[0.3em] text-slate-400">
                                 <th className="px-6 py-4">Domain</th>
-                                <th className="px-6 py-4">Server</th>
+                                <th className="px-6 py-4">Image</th>
+                                <th className="px-6 py-4">AZ</th>
                                 <th className="px-6 py-4">Status</th>
                                 <th className="px-6 py-4">Last deploy</th>
                                 <th className="px-6 py-4 text-right">Actions</th>
@@ -106,9 +107,10 @@ export default function Index({ sites, filters, statusOptions, summary }) {
                                             <p className="text-sm text-slate-400">{site.domain}</p>
                                         </td>
                                         <td className="px-6 py-4 text-sm text-slate-300">
-                                            <p>{site.server}</p>
+                                            <p className="text-white">{site.docker_image}</p>
                                             <p className="text-xs text-slate-500">{site.container_name}</p>
                                         </td>
+                                        <td className="px-6 py-4 text-sm text-slate-300">{site.availability_zone}</td>
                                         <td className="px-6 py-4">
                                             <StatusBadge status={site.status} label={site.status_label} />
                                         </td>

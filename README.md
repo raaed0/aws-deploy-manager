@@ -106,9 +106,10 @@ Set the exact same token inside the Laravel app (`MONITORING_ACCESS_TOKEN` in `.
 
 ## Application configuration
 
-- `WORDPRESS_DOCKER_IMAGE`, `WORDPRESS_DOCKER_NETWORK`, `WORDPRESS_DOCKER_PATH` – customize the default container template.
-- `MONITORING_ENDPOINT` – URL hit by the remote cron job (usually your deployed `/api/site-status`).
-- `MONITORING_ACCESS_TOKEN` – shared secret validated by `SiteStatusController`.
+- `WORDPRESS_DOCKER_IMAGE`, `WORDPRESS_DOCKER_NETWORK`, `WORDPRESS_DOCKER_PATH` - customize the default container template.
+- `MONITORING_ENDPOINT` - URL hit by the remote cron job (usually your deployed `/api/site-status`).
+- `MONITORING_ACCESS_TOKEN` - shared secret validated by `SiteStatusController`.
+- `WORDPRESS_REMOTE_HOST`, `WORDPRESS_REMOTE_PORT`, `WORDPRESS_REMOTE_USER`, `WORDPRESS_REMOTE_PRIVATE_KEY` - default SSH target for deployments (kept out of the UI).
 - Queue, cache, session, and DB drivers are all configured through the standard Laravel `.env` keys.
 
 ### Encryption

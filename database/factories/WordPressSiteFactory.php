@@ -23,6 +23,7 @@ class WordPressSiteFactory extends Factory
             'name' => Str::headline($domain),
             'domain' => $domain,
             'container_name' => Str::slug($domain),
+            'availability_zone' => $this->faker->randomElement(['us-east-1a', 'us-east-1b', 'us-east-1c']),
             'server_host' => $this->faker->ipv4(),
             'server_port' => 22,
             'server_user' => 'root',
