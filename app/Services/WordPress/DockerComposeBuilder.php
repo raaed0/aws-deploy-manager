@@ -43,6 +43,9 @@ services:
       - "traefik.http.routers.{$router}.entrypoints=web"
       - "traefik.http.services.{$router}.loadbalancer.server.port=80"
       - "traefik.docker.network={$network}"
+      - "traefik.http.middlewares.{$router}-https.headers.customrequestheaders.X-Forwarded-Proto=https"
+      - "traefik.http.middlewares.{$router}-https.headers.customrequestheaders.X-Forwarded-Port=443"
+      - "traefik.http.routers.{$router}.middlewares={$router}-https"
 
   {$site->container_name}_db:
     image: mariadb:11

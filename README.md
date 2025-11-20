@@ -124,11 +124,13 @@ ssh ec2-user@<docker-host> "cd /opt/wp-sites && docker compose -f traefik-proxy-
 To have Traefik start on reboot, install the provided systemd unit on the Docker host:
 
 ```bash
-scp scripts/traefik-proxy.service ec2-user@<docker-host>:/etc/systemd/system/traefik-proxy.service
-ssh ec2-user@<docker-host> "sudo systemctl daemon-reload && sudo systemctl enable --now traefik-proxy.service"
+  scp scripts/traefik-proxy.service ec2-user@<docker-host>:/etc/systemd/system/traefik-proxy.service
+  ssh ec2-user@<docker-host> "sudo systemctl daemon-reload && sudo systemctl enable --now traefik-proxy.service"
 ```
 
 Prereqs on the Docker host: Docker Engine + Compose plugin (or the standalone v2 binary), external network `wp-sites` created (`docker network create wp-sites`), and a wildcard DNS (or individual A records) pointing your domains to the Docker host IP. Traefik listens on port 80 and routes by `Host(...)` to each WordPress container automatically via labels.
+
+Behind Traefik/Cloudflare, the app injects `WORDPRESS_CONFIG_EXTRA` to set `WP_HOME/SITEURL` and trust forwarded HTTPS headers. The Traefik labels also force `X-Forwarded-Proto=https`/port 443 to avoid redirect loops on `/wp-login.php`.
 - Queue, cache, session, and DB drivers are all configured through the standard Laravel `.env` keys.
 
 ### Encryption
