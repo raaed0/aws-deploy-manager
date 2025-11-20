@@ -110,6 +110,18 @@ Set the exact same token inside the Laravel app (`MONITORING_ACCESS_TOKEN` in `.
 - `MONITORING_ENDPOINT` - URL hit by the remote cron job (usually your deployed `/api/site-status`).
 - `MONITORING_ACCESS_TOKEN` - shared secret validated by `SiteStatusController`.
 - `WORDPRESS_REMOTE_HOST`, `WORDPRESS_REMOTE_PORT`, `WORDPRESS_REMOTE_USER`, `WORDPRESS_REMOTE_PRIVATE_KEY` - default SSH target for deployments (kept out of the UI).
+- Host ports are assigned deterministically per container (8000–8999). Run a reverse proxy on the Docker host to route `siteX.yourdomain.com` to the right container instead of binding all WordPress containers to host :80.
+
+### Reverse proxy (Traefik) on the Docker host
+
+Run this once on the Docker node to route sites by Host header:
+
+```bash
+scp scripts/traefik-proxy-compose.yml ec2-user@<docker-host>:/opt/wp-sites/traefik-proxy-compose.yml
+ssh ec2-user@<docker-host> "cd /opt/wp-sites && docker compose -f traefik-proxy-compose.yml up -d"
+```
+
+Prereqs on the Docker host: Docker Engine + Compose plugin (or the standalone v2 binary), external network `wp-sites` created (`docker network create wp-sites`), and a wildcard DNS (or individual A records) pointing your domains to the Docker host IP. Traefik listens on port 80 and routes by `Host(...)` to each WordPress container automatically via labels.
 - Queue, cache, session, and DB drivers are all configured through the standard Laravel `.env` keys.
 
 ### Encryption

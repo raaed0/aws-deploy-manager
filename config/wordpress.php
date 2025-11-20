@@ -13,7 +13,6 @@ return [
         'private_key' => env('WORDPRESS_REMOTE_PRIVATE_KEY'),
         'private_key_path' => env('WORDPRESS_REMOTE_PRIVATE_KEY_PATH'),
     ],
-    'host_port' => env('WORDPRESS_HOST_PORT'), // optional static host port (e.g., 80) for single-site hosts
     'default_environment' => [
         'WORDPRESS_DB_HOST' => env('WORDPRESS_DB_HOST', 'database'),
         'AUTOMATIC_UPDATER_DISABLED' => 'true',

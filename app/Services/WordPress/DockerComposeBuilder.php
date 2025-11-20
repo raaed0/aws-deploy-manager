@@ -17,7 +17,7 @@ class DockerComposeBuilder
     {
         $network = config('wordpress.network');
         $image = $site->docker_image ?: config('wordpress.docker_image');
-        $hostPort = $this->hostPort($site);
+        $router = $this->routerName($site);
 
         return <<<YAML
 version: '3.9'
@@ -37,8 +37,12 @@ services:
       - {$site->container_name}_html:/var/www/html
     networks:
       - {$network}
-    ports:
-      - "{$hostPort}:80"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.{$router}.rule=Host(`{$site->domain}`)"
+      - "traefik.http.routers.{$router}.entrypoints=web"
+      - "traefik.http.services.{$router}.loadbalancer.server.port=80"
+      - "traefik.docker.network={$network}"
 
   {$site->container_name}_db:
     image: mariadb:11
@@ -75,11 +79,11 @@ YAML;
 
     protected function hostPort(WordPressSite $site): int
     {
-        $static = config('wordpress.host_port');
-        if ($static) {
-            return (int) $static;
-        }
-
         return 8000 + (abs(crc32($site->container_name)) % 1000);
+    }
+
+    protected function routerName(WordPressSite $site): string
+    {
+        return str_replace('_', '-', $site->container_name);
     }
 }
